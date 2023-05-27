@@ -25,7 +25,7 @@ traceArr = [
 i = 0
 for trace in traceArr:
     proc = subprocess.Popen(["./mdriver", "-vga", "-f", "traces/" + trace], stdout=subprocess.PIPE)
-    tmpstr = proc.stdout.read().decode("utf-8")
+    tmpstr = proc.stdout.read().decode("utf8")
     arr = tmpstr.split('\n')
 
     #print(arr[-4])
