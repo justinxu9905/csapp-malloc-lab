@@ -76,6 +76,7 @@ static void *heap_listp;
 static void *extend_heap(size_t words);
 static void *coalesce(void *bp);
 static void *find_fit(size_t asize);
+static void *best_fit(size_t asize);
 static void place(void *bp, size_t asize);
 
 /* 
@@ -217,11 +218,23 @@ void *find_fit(size_t asize)
 {
     void *bp;
     for (bp = heap_listp; GET_SIZE(HDRP(bp)) > 0; bp = NEXT_BLKP(bp)) {
-        if ((GET_SIZE(HDRP(bp)) >= asize) && !GET_ALLOC(HDRP(bp))) {
+        if (GET_SIZE(HDRP(bp)) >= asize && !GET_ALLOC(HDRP(bp))) {
             return bp;
         }
     }
     return NULL;
+}
+
+void *best_fit(size_t asize)
+{
+    void *bp = NULL;
+    size_t bp_size = -1;
+    for (void *cur_bp = heap_listp; GET_SIZE(HDRP(cur_bp)) > 0; cur_bp = NEXT_BLKP(cur_bp)) {
+        if (GET_SIZE(HDRP(cur_bp)) >= asize && !GET_ALLOC(HDRP(cur_bp)) && (bp_size == -1 || GET_SIZE(HDRP(cur_bp)) < bp_size)) {
+            bp = cur_bp;
+        }
+    }
+    return bp;
 }
 
 void place(void *bp, size_t asize)
